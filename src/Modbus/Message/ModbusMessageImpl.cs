@@ -12,34 +12,72 @@ namespace Modbus.Message
 	/// </summary>
     public class ModbusMessageImpl
 	{
+		/// <summary>
+		/// 
+		/// </summary>
 		public ModbusMessageImpl()
 		{
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="slaveAddress"></param>
+		/// <param name="functionCode"></param>
 		public ModbusMessageImpl(byte slaveAddress, byte functionCode)
 		{
 			SlaveAddress = slaveAddress;
 			FunctionCode = functionCode;
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
 		public byte? ByteCount { get; set; }
 
+		/// <summary>
+		/// 
+		/// </summary>
 		public byte? ExceptionCode { get; set; }
 
+		/// <summary>
+		/// 
+		/// </summary>
 		public ushort TransactionId { get; set; }
 		
+		/// <summary>
+		/// 
+		/// </summary>
 		public byte FunctionCode { get; set; }
 
+		/// <summary>
+		/// 
+		/// </summary>
 		public ushort? NumberOfPoints { get; set; }
 
+		/// <summary>
+		/// 
+		/// </summary>
 		public byte SlaveAddress { get; set; }
 
+		/// <summary>
+		/// 
+		/// </summary>
 		public ushort? StartAddress { get; set; }
 
+		/// <summary>
+		/// 
+		/// </summary>
 		public ushort? SubFunctionCode { get; set; }
 
+		/// <summary>
+		/// 
+		/// </summary>
 		public IModbusMessageDataCollection Data { get; set; }
 
+		/// <summary>
+		/// 
+		/// </summary>
 		public byte[] MessageFrame
 		{
 			get
@@ -52,6 +90,9 @@ namespace Modbus.Message
 			}
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
 		public byte[] ProtocolDataUnit
 		{
 			get
@@ -82,6 +123,12 @@ namespace Modbus.Message
 			}
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="frame"></param>
+		/// <exception cref="ArgumentNullException"></exception>
+		/// <exception cref="FormatException"></exception>
 		public void Initialize(byte[] frame)
 		{
 			if (frame == null)

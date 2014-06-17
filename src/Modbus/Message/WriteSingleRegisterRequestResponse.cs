@@ -8,12 +8,24 @@ using Modbus.Data;
 
 namespace Modbus.Message
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class WriteSingleRegisterRequestResponse : ModbusMessageWithData<RegisterCollection>, IModbusRequest
 	{		
+		/// <summary>
+		/// 
+		/// </summary>
 		public WriteSingleRegisterRequestResponse()
 		{
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="slaveAddress"></param>
+		/// <param name="startAddress"></param>
+		/// <param name="registerValue"></param>
 		public WriteSingleRegisterRequestResponse(byte slaveAddress, ushort startAddress, ushort registerValue)
 			: base(slaveAddress, Modbus.WriteSingleRegister)
 		{
@@ -21,17 +33,26 @@ namespace Modbus.Message
 			Data = new RegisterCollection(registerValue);
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
 		public override int MinimumFrameSize
 		{
 			get { return 6; }
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
 		public ushort StartAddress
 		{
 			get { return MessageImpl.StartAddress.Value; }
 			set { MessageImpl.StartAddress = value; }
 		}
 
+        /// <summary>
+        /// 
+        /// </summary>
 		public override string ToString()
 		{
 			Debug.Assert(Data != null, "Argument Data cannot be null.");
@@ -40,6 +61,11 @@ namespace Modbus.Message
 			return String.Format(CultureInfo.InvariantCulture, "Write single holding register {0} at address {1}.", Data[0], StartAddress);
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="response"></param>
+		/// <exception cref="IOException"></exception>
 		public void ValidateResponse(IModbusMessage response)
 		{
 			var typedResponse = (WriteSingleRegisterRequestResponse) response;
@@ -61,6 +87,10 @@ namespace Modbus.Message
 			}
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="frame"></param>
 		protected override void InitializeUnique(byte[] frame)
 		{
 			StartAddress = (ushort) IPAddress.NetworkToHostOrder(BitConverter.ToInt16(frame, 2));

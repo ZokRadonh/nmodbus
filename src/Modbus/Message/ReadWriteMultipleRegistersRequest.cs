@@ -7,15 +7,29 @@ using Unme.Common;
 
 namespace Modbus.Message
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class ReadWriteMultipleRegistersRequest : ModbusMessage, IModbusRequest
 	{		
 		private ReadHoldingInputRegistersRequest _readRequest;
 		private WriteMultipleRegistersRequest _writeRequest;
 
+		/// <summary>
+		/// 
+		/// </summary>
 		public ReadWriteMultipleRegistersRequest()
 		{
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="slaveAddress"></param>
+		/// <param name="startReadAddress"></param>
+		/// <param name="numberOfPointsToRead"></param>
+		/// <param name="startWriteAddress"></param>
+		/// <param name="writeData"></param>
 		public ReadWriteMultipleRegistersRequest(byte slaveAddress, ushort startReadAddress, ushort numberOfPointsToRead, ushort startWriteAddress, RegisterCollection writeData)
 			: base(slaveAddress, Modbus.ReadWriteMultipleRegisters)
 		{
@@ -23,6 +37,9 @@ namespace Modbus.Message
 			_writeRequest = new WriteMultipleRegistersRequest(slaveAddress, startWriteAddress, writeData);
 		}
 
+        /// <summary>
+        /// 
+        /// </summary>
 		public override byte[] ProtocolDataUnit
 		{
 			get
@@ -35,21 +52,33 @@ namespace Modbus.Message
 			}
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
 		public ReadHoldingInputRegistersRequest ReadRequest
 		{
 			get { return _readRequest; }
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
 		public WriteMultipleRegistersRequest WriteRequest
 		{
 			get { return _writeRequest; }
 		}
 
+        /// <summary>
+        /// 
+        /// </summary>
 		public override int MinimumFrameSize
 		{
 			get { return 11; }
 		}
 
+        /// <summary>
+        /// 
+        /// </summary>
 		public override string ToString()
 		{
 			return String.Format(CultureInfo.InvariantCulture, 
@@ -60,6 +89,11 @@ namespace Modbus.Message
 				_readRequest.StartAddress);
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="response"></param>
+		/// <exception cref="IOException"></exception>
 		public void ValidateResponse(IModbusMessage response)
 		{
 			var typedResponse = (ReadHoldingInputRegistersResponse) response;
@@ -74,6 +108,10 @@ namespace Modbus.Message
 			}
 		}
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="frame"></param>
 		protected override void InitializeUnique(byte[] frame)
 		{
 			if (frame.Length < MinimumFrameSize + frame[10])

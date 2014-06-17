@@ -4,10 +4,19 @@ using Modbus.Device;
 
 namespace Modbus.Message
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public static class ModbusMessageFactory
 	{
 		private const int MinRequestFrameLength = 3;
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="frame"></param>
+		/// <typeparam name="T"></typeparam>
+		/// <returns></returns>
 		public static T CreateModbusMessage<T>(byte[] frame) where T : IModbusMessage, new()
 		{
 			IModbusMessage message = new T();
@@ -16,6 +25,15 @@ namespace Modbus.Message
 			return (T) message;
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="slave"></param>
+		/// <param name="frame"></param>
+		/// <returns></returns>
+		/// <exception cref="ArgumentNullException"></exception>
+		/// <exception cref="FormatException"></exception>
+		/// <exception cref="ArgumentException"></exception>
 		public static IModbusMessage CreateModbusRequest(ModbusSlave slave, byte[] frame)
 		{
 			if (slave == null)

@@ -79,5 +79,6 @@ namespace Modbus.Data
 		public override string ToString()
 		{
 			return String.Concat("{", String.Join(", ", this.Select(v => v.ToString()).ToArray()), "}");
-		}	}
+		}
+	}
 }

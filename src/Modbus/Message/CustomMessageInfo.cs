@@ -5,12 +5,22 @@ using Unme.Common;
 
 namespace Modbus.Message
 {
+	/// <summary>
+	/// 
+	/// </summary>
 	public class CustomMessageInfo
 	{
 		private readonly Type _type;
 		private readonly Func<IModbusMessage, DataStore, IModbusMessage> _applyRequest;
 		private readonly Func<IModbusMessageRtu> _instanceGetter;
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="type"></param>
+		/// <param name="applyRequest"></param>
+		/// <exception cref="ArgumentNullException"></exception>
+		/// <exception cref="ArgumentException"></exception>
 		public CustomMessageInfo(Type type, Func<IModbusMessage, DataStore, IModbusMessage> applyRequest)
 		{
 			if (type == null)
@@ -38,6 +48,9 @@ namespace Modbus.Message
 			});
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
 		public Type Type
 		{
 			get
@@ -46,6 +59,9 @@ namespace Modbus.Message
 			}
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
 		public Func<IModbusMessage, DataStore, IModbusMessage> ApplyRequest
 		{
 			get
@@ -54,6 +70,9 @@ namespace Modbus.Message
 			}
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
 		public IModbusMessageRtu Instance
 		{
 			get

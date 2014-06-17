@@ -72,7 +72,7 @@ namespace Modbus.Data
 		/// </summary>
 		/// <typeparam name="T">The collection type.</typeparam>
 		/// <typeparam name="U">The type of elements in the collection.</typeparam>
-		internal static T ReadData<T, U>(DataStore dataStore, ModbusDataCollection<U> dataSource, ushort startAddress, ushort count, object syncRoot) where T : Collection<U>, new()
+		public static T ReadData<T, U>(DataStore dataStore, ModbusDataCollection<U> dataSource, ushort startAddress, ushort count, object syncRoot) where T : Collection<U>, new()
 		{
 			int startIndex = startAddress + 1;
 
@@ -99,7 +99,7 @@ namespace Modbus.Data
 		/// Write data to data store.
 		/// </summary>
 		/// <typeparam name="TData">The type of the data.</typeparam>
-		internal static void WriteData<TData>(DataStore dataStore, IEnumerable<TData> items, ModbusDataCollection<TData> destination, ushort startAddress, object syncRoot)
+        public static void WriteData<TData>(DataStore dataStore, IEnumerable<TData> items, ModbusDataCollection<TData> destination, ushort startAddress, object syncRoot)
 		{
 			int startIndex = startAddress + 1;
 
