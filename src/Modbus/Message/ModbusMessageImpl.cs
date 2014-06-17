@@ -10,7 +10,7 @@ namespace Modbus.Message
 	/// Class holding all implementation shared between two or more message types. 
 	/// Interfaces expose subsets of type specific implementations.
 	/// </summary>
-	internal class ModbusMessageImpl
+    public class ModbusMessageImpl
 	{
 		public ModbusMessageImpl()
 		{

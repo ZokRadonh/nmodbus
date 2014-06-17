@@ -5,7 +5,7 @@ using Unme.Common;
 
 namespace Modbus.Message
 {
-	internal class CustomMessageInfo
+	public class CustomMessageInfo
 	{
 		private readonly Type _type;
 		private readonly Func<IModbusMessage, DataStore, IModbusMessage> _applyRequest;

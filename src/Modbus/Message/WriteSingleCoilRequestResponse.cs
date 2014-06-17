@@ -9,7 +9,7 @@ using Unme.Common;
 
 namespace Modbus.Message
 {
-	internal class WriteSingleCoilRequestResponse : ModbusMessageWithData<RegisterCollection>, IModbusRequest
+    public class WriteSingleCoilRequestResponse : ModbusMessageWithData<RegisterCollection>, IModbusRequest
 	{
 		public WriteSingleCoilRequestResponse()
 		{

@@ -4,7 +4,7 @@ using System.Net;
 
 namespace Modbus.Message
 {
-	internal class WriteMultipleCoilsResponse : ModbusMessage, IModbusMessage
+    public class WriteMultipleCoilsResponse : ModbusMessage, IModbusMessage
 	{
 		public WriteMultipleCoilsResponse()
 		{

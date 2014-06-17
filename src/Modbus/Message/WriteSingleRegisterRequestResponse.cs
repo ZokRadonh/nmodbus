@@ -8,7 +8,7 @@ using Modbus.Data;
 
 namespace Modbus.Message
 {
-	internal class WriteSingleRegisterRequestResponse : ModbusMessageWithData<RegisterCollection>, IModbusRequest
+    public class WriteSingleRegisterRequestResponse : ModbusMessageWithData<RegisterCollection>, IModbusRequest
 	{		
 		public WriteSingleRegisterRequestResponse()
 		{

@@ -4,7 +4,7 @@ using Modbus.Device;
 
 namespace Modbus.Message
 {
-	internal static class ModbusMessageFactory
+    public static class ModbusMessageFactory
 	{
 		private const int MinRequestFrameLength = 3;
 

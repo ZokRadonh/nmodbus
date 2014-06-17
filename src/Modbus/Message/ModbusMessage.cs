@@ -3,7 +3,7 @@ using System.Globalization;
 
 namespace Modbus.Message
 {
-	internal abstract class ModbusMessage
+    public abstract class ModbusMessage
 	{
 		private ModbusMessageImpl _messageImpl;
 

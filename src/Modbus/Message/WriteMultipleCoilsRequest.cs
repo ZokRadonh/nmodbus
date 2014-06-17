@@ -8,7 +8,7 @@ using Unme.Common;
 
 namespace Modbus.Message
 {
-	internal 	class WriteMultipleCoilsRequest : ModbusMessageWithData<DiscreteCollection>, IModbusRequest
+    public class WriteMultipleCoilsRequest : ModbusMessageWithData<DiscreteCollection>, IModbusRequest
 	{		
 		public WriteMultipleCoilsRequest()
 		{
