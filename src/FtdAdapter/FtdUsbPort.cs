@@ -41,7 +41,7 @@ namespace FtdAdapter
 			set
 			{
 				if (value <= 0)
-					throw new ArgumentOutOfRangeException("BaudRate", "BaudRate must be greater than 0.");
+					throw new ArgumentOutOfRangeException("BaudRate", @"BaudRate must be greater than 0.");
 
 				_baudRate = value;
 
@@ -62,7 +62,7 @@ namespace FtdAdapter
 			set
 			{
 				if (value < 5 || value > 8)
-					throw new ArgumentOutOfRangeException("DataBits", "Value must be greater than 4 and less than 9.");
+					throw new ArgumentOutOfRangeException("DataBits", @"Value must be greater than 4 and less than 9.");
 
 				_dataBits = value;
 
@@ -91,7 +91,7 @@ namespace FtdAdapter
 			set
 			{
 				if (value < 0)
-					throw new ArgumentOutOfRangeException("ReadTimeout", "Read timeout must be greater than 0.");
+					throw new ArgumentOutOfRangeException("ReadTimeout", @"Read timeout must be greater than 0.");
 
 				_readTimeout = (uint) value;
 
@@ -112,7 +112,7 @@ namespace FtdAdapter
 			set
 			{
 				if (value < 0)
-					throw new ArgumentOutOfRangeException("WriteTimeout", "Write timeout must be greater than 0.");
+					throw new ArgumentOutOfRangeException("WriteTimeout", @"Write timeout must be greater than 0.");
 
 				_writeTimeout = (uint) value;
 
@@ -286,11 +286,11 @@ namespace FtdAdapter
 			if (!IsOpen)
 				throw new InvalidOperationException("Port not open.");
 			if (buffer == null)
-				throw new ArgumentNullException("buffer", "Argument buffer cannot be null.");
+				throw new ArgumentNullException("buffer", @"Argument buffer cannot be null.");
 			if (offset < 0)
-				throw new ArgumentOutOfRangeException("offset", "Argument offset must be greater than 0.");
+				throw new ArgumentOutOfRangeException("offset", @"Argument offset must be greater than 0.");
 			if (count < 0)
-				throw new ArgumentOutOfRangeException("count", "Argument count must be greater than 0.");
+				throw new ArgumentOutOfRangeException("count", @"Argument count must be greater than 0.");
 			if ((buffer.Length - offset) < count)
 				throw new ArgumentException("Invalid buffer size.");
 
@@ -318,11 +318,11 @@ namespace FtdAdapter
 			if (!IsOpen)
 				throw new InvalidOperationException("Port not open.");
 			if (buffer == null)
-				throw new ArgumentNullException("buffer", "Argument buffer cannot be null.");
+				throw new ArgumentNullException("buffer", @"Argument buffer cannot be null.");
 			if (offset < 0)
-				throw new ArgumentOutOfRangeException("offset", "Argument offset cannot be less than 0.");
+				throw new ArgumentOutOfRangeException("offset", @"Argument offset cannot be less than 0.");
 			if (count < 0)
-				throw new ArgumentOutOfRangeException("count", "Argument count cannot be less than 0.");
+				throw new ArgumentOutOfRangeException("count", @"Argument count cannot be less than 0.");
 			if ((buffer.Length - offset) < count)
 				throw new ArgumentException("Invalid buffer size.");
 

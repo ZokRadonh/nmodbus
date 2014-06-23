@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Threading;
-using log4net;
+using NLog;
 using Modbus.Device;
 using Modbus.Message;
 using Unme.Common;
@@ -17,7 +17,7 @@ namespace Modbus.IO
     /// </summary>
     public abstract class ModbusTransport : IDisposable
     {
-        private static readonly ILog _logger = LogManager.GetLogger(typeof(ModbusTransport));
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private object _syncLock = new object();
         private int _retries = Modbus.DefaultRetries;
         private int _waitToRetryMilliseconds = Modbus.DefaultWaitToRetryMilliseconds;
@@ -145,9 +145,11 @@ namespace Modbus.IO
                             if (exceptionResponse != null)
                             {
                                 // if SlaveExceptionCode == ACKNOWLEDGE we retry reading the response without resubmitting request
-                                if (readAgain = exceptionResponse.SlaveExceptionCode == Modbus.Acknowledge)
+                                readAgain = exceptionResponse.SlaveExceptionCode == Modbus.Acknowledge;
+                                if (readAgain)
                                 {
-                                    _logger.InfoFormat("Received ACKNOWLEDGE slave exception response, waiting {0} milliseconds and retrying to read response.", _waitToRetryMilliseconds);
+                                    Logger.Info(
+                                        @"Received ACKNOWLEDGE slave exception response, waiting {0} milliseconds and retrying to read response.", _waitToRetryMilliseconds);
                                     Thread.Sleep(WaitToRetryMilliseconds);
                                 }
                                 else
@@ -172,7 +174,7 @@ namespace Modbus.IO
                     if (SlaveBusyUsesRetryCount && attempt++ > _retries)
                         throw;
 
-                    _logger.InfoFormat("Received SLAVE_DEVICE_BUSY exception response, waiting {0} milliseconds and resubmitting request.", _waitToRetryMilliseconds);
+                    Logger.Info("Received SLAVE_DEVICE_BUSY exception response, waiting {0} milliseconds and resubmitting request.", _waitToRetryMilliseconds);
                     Thread.Sleep(WaitToRetryMilliseconds);
                 }
                 catch (Exception e)
@@ -182,7 +184,7 @@ namespace Modbus.IO
                         e is TimeoutException ||
                         e is IOException)
                     {
-                        _logger.WarnFormat("{0}, {1} retries remaining - {2}", e.GetType().Name, _retries - attempt + 1, e);
+                        Logger.Warn("{0}, {1} retries remaining - {2}", e.GetType().Name, _retries - attempt + 1, e);
 
                         if (attempt++ > _retries)
                             throw;

@@ -2,7 +2,7 @@ using System;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using log4net;
+using NLog;
 using Modbus.Message;
 using Unme.Common;
 
@@ -14,7 +14,7 @@ namespace Modbus.IO
 	/// </summary>
 	public abstract class ModbusSerialTransport : ModbusTransport
 	{
-		private static readonly ILog _logger = LogManager.GetLogger(typeof(ModbusSerialTransport));
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 		private bool _checkFrame = true;
 
 		internal ModbusSerialTransport(IStreamResource streamResource)
@@ -42,7 +42,7 @@ namespace Modbus.IO
 			DiscardInBuffer();
 
 			byte[] frame = BuildMessageFrame(message);
-			_logger.InfoFormat("TX: {0}", frame.Join(", "));
+            Logger.Info("TX: {0}", frame.Join(", "));
 			StreamResource.Write(frame, 0, frame.Length);
 		}
 
@@ -53,8 +53,9 @@ namespace Modbus.IO
 			// compare checksum
 			if (CheckFrame && !ChecksumsMatch(response, frame))
 			{
-				string errorMessage = String.Format(CultureInfo.InvariantCulture, "Checksums failed to match {0} != {1}", response.MessageFrame.Join(", "), frame.Join(", "));
-				_logger.Error(errorMessage);
+				string errorMessage = String.Format(
+                    CultureInfo.InvariantCulture, "Checksums failed to match {0} != {1}", response.MessageFrame.Join(", "), frame.Join(", "));
+                Logger.Error(errorMessage);
 				throw new IOException(errorMessage);
 			}
 

@@ -1,6 +1,5 @@
 using Modbus.Device;
 using NUnit.Framework;
-using System;
 
 namespace Modbus.IntegrationTests
 {

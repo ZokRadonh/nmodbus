@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
-using log4net;
+using NLog;
 using Modbus.IO;
 using Modbus.Message;
 using Unme.Common;
@@ -14,7 +14,7 @@ namespace Modbus.Device
 	/// </summary>
 	public class ModbusUdpSlave : ModbusSlave
 	{
-		private static readonly ILog _logger = LogManager.GetLogger(typeof(ModbusUdpSlave));
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 		private readonly UdpClient _udpClient;
 
 		private ModbusUdpSlave(byte unitId, UdpClient udpClient)
@@ -45,7 +45,7 @@ namespace Modbus.Device
 		/// </summary>
 		public override void Listen()
 		{
-			_logger.Debug("Start Modbus Udp Server.");
+            Logger.Debug("Start Modbus Udp Server.");
 
 			try
 			{
@@ -56,19 +56,19 @@ namespace Modbus.Device
 
 					frame = _udpClient.Receive(ref masterEndPoint);
 
-					_logger.DebugFormat("Read Frame completed {0} bytes", frame.Length);
-					_logger.InfoFormat("RX: {0}", frame.Join(", "));
+                    Logger.Debug("Read Frame completed {0} bytes", frame.Length);
+                    Logger.Info("RX: {0}", frame.Join(", "));
 
-					IModbusMessage request = ModbusMessageFactory.CreateModbusRequest(this, frame.Slice(6, frame.Length - 6).ToArray());
+					var request = ModbusMessageFactory.CreateModbusRequest(this, frame.Slice(6, frame.Length - 6).ToArray());
 					request.TransactionId = (ushort) IPAddress.NetworkToHostOrder(BitConverter.ToInt16(frame, 0));
 
 					// perform action and build response
-					IModbusMessage response = ApplyRequest(request);
+					var response = ApplyRequest(request);
 					response.TransactionId = request.TransactionId;
 
 					// write response
-					byte[] responseFrame = Transport.BuildMessageFrame(response);
-					_logger.InfoFormat("TX: {0}", responseFrame.Join(", "));
+					var responseFrame = Transport.BuildMessageFrame(response);
+                    Logger.Info("TX: {0}", responseFrame.Join(", "));
 					_udpClient.Send(responseFrame, responseFrame.Length, masterEndPoint);
 				}
 			}

@@ -1,8 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
 using NUnit.Framework;
-using System.IO.Ports;
 using Modbus.Device;
 using Modbus.Data;
 using System.Threading;
@@ -15,14 +11,14 @@ namespace Modbus.IntegrationTests
 		[TestFixtureSetUp]
 		public void SetUp()
 		{
-			log4net.Config.XmlConfigurator.Configure();
+			
 		}
 
 		[Test]
 		public void NModbusSerialRtuSlave_BonusCharacter_VerifyTimeout()
 		{
-			SerialPort masterPort = ModbusMasterFixture.CreateAndOpenSerialPort(ModbusMasterFixture.DefaultMasterSerialPortName);
-			SerialPort slavePort = ModbusMasterFixture.CreateAndOpenSerialPort(ModbusMasterFixture.DefaultSlaveSerialPortName);
+			var masterPort = ModbusMasterFixture.CreateAndOpenSerialPort(ModbusMasterFixture.DefaultMasterSerialPortName);
+			var slavePort = ModbusMasterFixture.CreateAndOpenSerialPort(ModbusMasterFixture.DefaultSlaveSerialPortName);
 
 			using (var master = ModbusSerialMaster.CreateRtu(masterPort))
 			using (var slave = ModbusSerialSlave.CreateRtu(1, slavePort))
@@ -30,18 +26,17 @@ namespace Modbus.IntegrationTests
 				master.Transport.ReadTimeout = master.Transport.WriteTimeout = 1000;				
 				slave.DataStore = DataStoreFactory.CreateTestDataStore();
 
-				Thread slaveThread = new Thread(slave.Listen);
-				slaveThread.IsBackground = true;
-				slaveThread.Start();
+                var slaveThread = new Thread(slave.Listen) {IsBackground = true};
+			    slaveThread.Start();
 
 				// assert successful communication
-				Assert.AreEqual(new bool[] { false, true }, master.ReadCoils(1, 1, 2));
+				Assert.AreEqual(new[] { false, true }, master.ReadCoils(1, 1, 2));
 
 				// write "bonus" character
 				masterPort.Write("*");
 
 				// assert successful communication
-				Assert.AreEqual(new bool[] { false, true }, master.ReadCoils(1, 1, 2));
+				Assert.AreEqual(new[] { false, true }, master.ReadCoils(1, 1, 2));
 			}
 		}
 	}

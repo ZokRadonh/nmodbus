@@ -4,11 +4,11 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
-using log4net;
 using Modbus.Data;
 using Modbus.IO;
 using Modbus.Message;
 using Unme.Common;
+using NLog;
 
 namespace Modbus.Device
 {
@@ -16,8 +16,8 @@ namespace Modbus.Device
 	/// Modbus slave device.
 	/// </summary>
 	public abstract class ModbusSlave : ModbusDevice
-	{	
-		private static readonly ILog _logger = LogManager.GetLogger(typeof(ModbusSlave));
+	{
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 		private readonly Dictionary<byte, CustomMessageInfo> _customMessages = new Dictionary<byte, CustomMessageInfo>();
 
 		private Func<Type, MethodInfo> _createModbusMessageCache = FunctionalUtility.Memoize((Type type) =>
@@ -66,7 +66,7 @@ namespace Modbus.Device
 			if (applyRequest == null)
 				throw new ArgumentNullException("applyRequest");
 			if (_customMessages.ContainsKey(functionCode))
-				throw new ArgumentException("A custom function already exists with the specified function code. You must unregister it first.", "functionCode");
+				throw new ArgumentException(@"A custom function already exists with the specified function code. You must unregister it first.", "functionCode");
 
 			// CONSIDER only allowing true user-defined function codes, Modbus defines 65-72 and 100-110 as user-defined function codes.
 
@@ -183,7 +183,7 @@ namespace Modbus.Device
 			if (request == null)
 				throw new ArgumentNullException("request");
 
-			_logger.Info(request.ToString());
+            Logger.Info(request.ToString());
 			ModbusSlaveRequestReceived.Raise(this, new ModbusSlaveRequestEventArgs(request));
 			IModbusMessage response;
 
@@ -227,7 +227,7 @@ namespace Modbus.Device
 						break;
 					default:
 						string errorMessage = String.Format(CultureInfo.InvariantCulture, "Unsupported function code {0}", request.FunctionCode);
-						_logger.Error(errorMessage);
+                        Logger.Error(errorMessage);
 						throw new ArgumentException(errorMessage, "request");
 				}
 			}

@@ -81,7 +81,7 @@ namespace Modbus.IO
 			if (buffer == null)
 				throw new ArgumentNullException("buffer");
 			if (count > buffer.Length)
-				throw new ArgumentOutOfRangeException("count", "Argument count cannot be greater than the length of buffer.");
+				throw new ArgumentOutOfRangeException("count", @"Argument count cannot be greater than the length of buffer.");
 
 			UdpClient.Send(buffer, count);
 		}

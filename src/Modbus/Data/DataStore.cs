@@ -118,7 +118,7 @@ namespace Modbus.Data
 		/// <summary>
 		/// Updates subset of values in a collection.
 		/// </summary>
-		internal static void Update<T>(IEnumerable<T> items, IList<T> destination, int startIndex)
+        public static void Update<T>(IEnumerable<T> items, IList<T> destination, int startIndex)
 		{
 			if (startIndex < 0 || destination.Count < startIndex + items.Count())
 				throw new ArgumentOutOfRangeException("Index was out of range. Must be non-negative and less than the size of the collection.");

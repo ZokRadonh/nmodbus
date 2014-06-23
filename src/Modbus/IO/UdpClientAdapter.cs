@@ -69,13 +69,13 @@ namespace Modbus.IO
 			if (buffer == null)
 				throw new ArgumentNullException("buffer");
 			if (offset < 0)
-				throw new ArgumentOutOfRangeException("offset", "Argument offset must be greater than or equal to 0.");
+				throw new ArgumentOutOfRangeException("offset", @"Argument offset must be greater than or equal to 0.");
 			if (offset > buffer.Length)
-				throw new ArgumentOutOfRangeException("offset", "Argument offset cannot be greater than the length of buffer.");
+				throw new ArgumentOutOfRangeException("offset", @"Argument offset cannot be greater than the length of buffer.");
 			if (count < 0)
-				throw new ArgumentOutOfRangeException("count", "Argument count must be greater than or equal to 0.");
+				throw new ArgumentOutOfRangeException("count", @"Argument count must be greater than or equal to 0.");
 			if (count > buffer.Length - offset)
-				throw new ArgumentOutOfRangeException("count", "Argument count cannot be greater than the length of buffer minus offset.");
+				throw new ArgumentOutOfRangeException("count", @"Argument count cannot be greater than the length of buffer minus offset.");
 			
 			return Client.Read(buffer, offset, count);
 		}
@@ -85,9 +85,9 @@ namespace Modbus.IO
 			if (buffer == null)
 				throw new ArgumentNullException("buffer");
 			if (offset < 0)
-				throw new ArgumentOutOfRangeException("offset", "Argument offset must be greater than or equal to 0.");
+				throw new ArgumentOutOfRangeException("offset", @"Argument offset must be greater than or equal to 0.");
 			if (offset > buffer.Length)
-				throw new ArgumentOutOfRangeException("offset", "Argument offset cannot be greater than the length of buffer.");
+				throw new ArgumentOutOfRangeException("offset", @"Argument offset cannot be greater than the length of buffer.");
 			
 			Client.Write(buffer.Skip(offset).ToArray(), count);
 		}

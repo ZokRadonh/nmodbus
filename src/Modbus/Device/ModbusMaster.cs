@@ -83,7 +83,7 @@ namespace Modbus.Device
 		/// <param name="value">Value to write.</param>
 		public void WriteSingleCoil(byte slaveAddress, ushort coilAddress, bool value)
 		{
-			WriteSingleCoilRequestResponse request = new WriteSingleCoilRequestResponse(slaveAddress, coilAddress, value);
+			var request = new WriteSingleCoilRequestResponse(slaveAddress, coilAddress, value);
 			Transport.UnicastMessage<WriteSingleCoilRequestResponse>(request);
 		}
 
@@ -95,7 +95,7 @@ namespace Modbus.Device
 		/// <param name="value">Value to write.</param>
 		public void WriteSingleRegister(byte slaveAddress, ushort registerAddress, ushort value)
 		{
-			WriteSingleRegisterRequestResponse request = new WriteSingleRegisterRequestResponse(slaveAddress, registerAddress, value);
+			var request = new WriteSingleRegisterRequestResponse(slaveAddress, registerAddress, value);
 			Transport.UnicastMessage<WriteSingleRegisterRequestResponse>(request);
 		}
 
@@ -109,7 +109,7 @@ namespace Modbus.Device
 		{
 			ValidateData("data", data, 123);
 
-			WriteMultipleRegistersRequest request = new WriteMultipleRegistersRequest(slaveAddress, startAddress, new RegisterCollection(data));
+            var request = new WriteMultipleRegistersRequest(slaveAddress, startAddress, new RegisterCollection(data));
 			Transport.UnicastMessage<WriteMultipleRegistersResponse>(request);
 		}	
 
@@ -123,7 +123,7 @@ namespace Modbus.Device
 		{
 			ValidateData("data", data, 1968);
 
-			WriteMultipleCoilsRequest request = new WriteMultipleCoilsRequest(slaveAddress, startAddress, new DiscreteCollection(data));
+            var request = new WriteMultipleCoilsRequest(slaveAddress, startAddress, new DiscreteCollection(data));
 			Transport.UnicastMessage<WriteMultipleCoilsResponse>(request);
 		}
 
@@ -141,8 +141,8 @@ namespace Modbus.Device
 			ValidateNumberOfPoints("numberOfPointsToRead", numberOfPointsToRead, 125);
 			ValidateData("writeData", writeData, 121);
 
-			ReadWriteMultipleRegistersRequest request = new ReadWriteMultipleRegistersRequest(slaveAddress, startReadAddress, numberOfPointsToRead, startWriteAddress, new RegisterCollection(writeData));			
-			ReadHoldingInputRegistersResponse response = Transport.UnicastMessage<ReadHoldingInputRegistersResponse>(request);
+            var request = new ReadWriteMultipleRegistersRequest(slaveAddress, startReadAddress, numberOfPointsToRead, startWriteAddress, new RegisterCollection(writeData));
+            var response = Transport.UnicastMessage<ReadHoldingInputRegistersResponse>(request);
 
 			return response.Data.ToArray();
 		}	
@@ -158,7 +158,7 @@ namespace Modbus.Device
 		{
 			if (Transport is ModbusRtuTransport)
 			{
-				string errorMessageFormat = "In order to use the RTU protocol your custom {0} type {1} needs to implement the {2} interface.";
+				const string errorMessageFormat = "In order to use the RTU protocol your custom {0} type {1} needs to implement the {2} interface.";
 
 				if (!(request is IModbusMessageRtu))
 				{
@@ -213,16 +213,16 @@ namespace Modbus.Device
 
 		internal ushort[] ReadRegisters(byte functionCode, byte slaveAddress, ushort startAddress, ushort numberOfPoints)
 		{
-			ReadHoldingInputRegistersRequest request = new ReadHoldingInputRegistersRequest(functionCode, slaveAddress, startAddress, numberOfPoints);
-			ReadHoldingInputRegistersResponse response = Transport.UnicastMessage<ReadHoldingInputRegistersResponse>(request);
+            var request = new ReadHoldingInputRegistersRequest(functionCode, slaveAddress, startAddress, numberOfPoints);
+            var response = Transport.UnicastMessage<ReadHoldingInputRegistersResponse>(request);
 
 			return response.Data.ToArray();
 		}
 
 		internal bool[] ReadDiscretes(byte functionCode, byte slaveAddress, ushort startAddress, ushort numberOfPoints)
 		{
-			ReadCoilsInputsRequest request = new ReadCoilsInputsRequest(functionCode, slaveAddress, startAddress, numberOfPoints);
-			ReadCoilsInputsResponse response = Transport.UnicastMessage<ReadCoilsInputsResponse>(request);
+            var request = new ReadCoilsInputsRequest(functionCode, slaveAddress, startAddress, numberOfPoints);
+            var response = Transport.UnicastMessage<ReadCoilsInputsResponse>(request);
 
 			return response.Data.Slice(0, request.NumberOfPoints).ToArray();
 		}

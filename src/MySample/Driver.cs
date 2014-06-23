@@ -17,21 +17,19 @@ namespace MySample
     {
         private static void Main(string[] args)
         {
-            log4net.Config.XmlConfigurator.Configure();
-
             try
             {
                 //ModbusTcpMasterReadInputs();
                 //SimplePerfTest();
                 //ModbusSerialRtuMasterWriteRegisters();
                 //ModbusSerialAsciiMasterReadRegisters();
-                //ModbusTcpMasterReadInputs();				
-                //StartModbusAsciiSlave();
-                ModbusTcpMasterReadInputsFromModbusSlave();
+                //ModbusTcpMasterReadInputs();			
+                //ModbusTcpMasterReadInputsFromModbusSlave();
                 //ModbusSerialAsciiMasterReadRegistersFromModbusSlave();
                 //StartModbusTcpSlave();
-                //StartModbusUdpSlave();
-                //StartModbusAsciiSlave();
+                //StartModbusUdpSlave();	
+                //StartModbusSerialAsciiSlave();
+                StartModbusSerialRtuSlave();
             }
             catch (Exception e)
             {
@@ -46,7 +44,7 @@ namespace MySample
         /// </summary>
         public static void ModbusSerialRtuMasterWriteRegisters()
         {
-            using (var port = new SerialPort("COM1"))
+            using (var port = new SerialPort("COM4"))
             {
                 // configure serial port
                 port.BaudRate = 9600;
@@ -72,7 +70,7 @@ namespace MySample
         /// </summary>
         public static void ModbusSerialAsciiMasterReadRegisters()
         {
-            using (var port = new SerialPort("COM1"))
+            using (var port = new SerialPort("COM4"))
             {
                 // configure serial port
                 port.BaudRate = 9600;
@@ -203,7 +201,7 @@ namespace MySample
         /// </summary>
         public static void StartModbusSerialAsciiSlave()
         {
-            using (var slavePort = new SerialPort("COM2"))
+            using (var slavePort = new SerialPort("COM3"))
             {
                 // configure serial port
                 slavePort.BaudRate = 9600;
@@ -227,7 +225,7 @@ namespace MySample
         /// </summary>
         public static void StartModbusSerialRtuSlave()
         {
-            using (var slavePort = new SerialPort("COM2"))
+            using (var slavePort = new SerialPort("COM3"))
             {
                 // configure serial port
                 slavePort.BaudRate = 9600;
@@ -267,21 +265,29 @@ namespace MySample
         /// </summary>
         public static void StartModbusTcpSlave()
         {
-            const byte slaveId = 1;
-            const int port = 502;
-            var address = new IPAddress(new byte[] {127, 0, 0, 1});
+            try
+            {
+                const byte slaveId = 1;
+                const int port = 502;
+                var address = new IPAddress(new byte[] {127, 0, 0, 1});
 
-            // create and start the TCP slave
-            var slaveTcpListener = new TcpListener(address, port);
-            slaveTcpListener.Start();
+                // create and start the TCP slave
+                var slaveTcpListener = new TcpListener(address, port);
+                slaveTcpListener.Start();
 
-            ModbusSlave slave = ModbusTcpSlave.CreateTcp(slaveId, slaveTcpListener);
-            slave.DataStore = DataStoreFactory.CreateDefaultDataStore();
+                ModbusSlave slave = ModbusTcpSlave.CreateTcp(slaveId, slaveTcpListener);
+                slave.DataStore = DataStoreFactory.CreateDefaultDataStore();
 
-            slave.Listen();
+                slave.Listen();
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
 
             // prevent the main thread from exiting
-            Thread.Sleep(Timeout.Infinite);
+//            Thread.Sleep(Timeout.Infinite);
         }
 
         /// <summary>
@@ -347,8 +353,8 @@ namespace MySample
         /// </summary>
         public static void ModbusSerialAsciiMasterReadRegistersFromModbusSlave()
         {
-            using (var masterPort = new SerialPort("COM1"))
-            using (var slavePort = new SerialPort("COM2"))
+            using (var masterPort = new SerialPort("COM4"))
+            using (var slavePort = new SerialPort("COM3"))
             {
                 // configure serial ports
                 masterPort.BaudRate = slavePort.BaudRate = 9600;
@@ -361,7 +367,7 @@ namespace MySample
                 // create modbus slave on seperate thread
                 const byte slaveId = 1;
                 ModbusSlave slave = ModbusSerialSlave.CreateAscii(slaveId, slavePort);
-                var slaveThread = new Thread(new ThreadStart(slave.Listen));
+                var slaveThread = new Thread(slave.Listen);
                 slaveThread.Start();
 
                 // create modbus master

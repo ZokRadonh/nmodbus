@@ -5,7 +5,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
-using log4net;
+using NLog;
 using Modbus.Device;
 using Modbus.Message;
 using Unme.Common;
@@ -18,7 +18,7 @@ namespace Modbus.IO
     /// </summary>
     internal class ModbusIpTransport : ModbusTransport
     {
-        private static readonly ILog _logger = LogManager.GetLogger(typeof(ModbusIpTransport));
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private static readonly object _transactionIdLock = new object();
         private const int REREADTHRESHOLD = 3;
         private ushort _transactionId;
@@ -41,10 +41,10 @@ namespace Modbus.IO
                 if (numBytesRead == 0)
                     throw new IOException("Read resulted in 0 bytes returned.");
             }
-            _logger.DebugFormat("MBAP header: {0}", mbapHeader.Join(", "));
+            Logger.Debug("MBAP header: {0}", mbapHeader.Join(", "));
 
             ushort frameLength = (ushort)IPAddress.HostToNetworkOrder(BitConverter.ToInt16(mbapHeader, 4));
-            _logger.DebugFormat("{0} bytes in PDU.", frameLength);
+            Logger.Debug("{0} bytes in PDU.", frameLength);
 
             // read message
             byte[] messageFrame = new byte[frameLength];
@@ -56,19 +56,19 @@ namespace Modbus.IO
                 if (numBytesRead == 0)
                     throw new IOException("Read resulted in 0 bytes returned.");
             }
-            _logger.DebugFormat("PDU: {0}", frameLength);
+            Logger.Debug("PDU: {0}", frameLength);
 
             byte[] frame = mbapHeader.Concat(messageFrame).ToArray();
-            _logger.DebugFormat("RX: {0}", frame.Join(", "));
+            Logger.Debug("RX: {0}", frame.Join(", "));
 
             return frame;
         }
 
         internal static byte[] GetMbapHeader(IModbusMessage message)
         {
-            byte[] transactionId = BitConverter.GetBytes((short)IPAddress.HostToNetworkOrder((short)message.TransactionId));
+            byte[] transactionId = BitConverter.GetBytes(IPAddress.HostToNetworkOrder((short)message.TransactionId));
             byte[] protocol = { 0, 0 };
-            byte[] length = BitConverter.GetBytes((short)IPAddress.HostToNetworkOrder((short)(message.ProtocolDataUnit.Length + 1)));
+            byte[] length = BitConverter.GetBytes(IPAddress.HostToNetworkOrder((short)(message.ProtocolDataUnit.Length + 1)));
 
             return transactionId.Concat(protocol, length, new byte[] { message.SlaveAddress }).ToArray();
         }
@@ -108,7 +108,7 @@ namespace Modbus.IO
         {
             message.TransactionId = GetNewTransactionId();
             byte[] frame = BuildMessageFrame(message);
-            _logger.DebugFormat("TX: {0}", frame.Join(", "));
+            Logger.Debug("TX: {0}", frame.Join(", "));
             StreamResource.Write(frame, 0, frame.Length);
         }
 
@@ -128,9 +128,9 @@ namespace Modbus.IO
             {
                 return true;
             }
-            else if (request.TransactionId > response.TransactionId && (request.TransactionId - response.TransactionId) <= REREADTHRESHOLD)
+            if (request.TransactionId > response.TransactionId && (request.TransactionId - response.TransactionId) <= REREADTHRESHOLD)
             {
-                _logger.InfoFormat("Response ({0}) was behind request ({1}) - requesting re-read", response.TransactionId, request.TransactionId);
+                Logger.Info("Response ({0}) was behind request ({1}) - requesting re-read", response.TransactionId, request.TransactionId);
                 return false;
             }
 

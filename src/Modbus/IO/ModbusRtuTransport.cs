@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
-using log4net;
+using NLog;
 using Modbus.Device;
 using Modbus.Message;
 using Modbus.Utility;
@@ -19,7 +19,7 @@ namespace Modbus.IO
 		public const int RequestFrameStartLength = 7;
 		public const int ResponseFrameStartLength = 4;
 
-		private static readonly ILog _logger = LogManager.GetLogger(typeof(ModbusRtuTransport));
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
 		private Func<Type, IModbusMessageRtu> _instanceCache = FunctionalUtility.Memoize((Type type) => (IModbusMessageRtu) Activator.CreateInstance(type));
 
@@ -37,9 +37,9 @@ namespace Modbus.IO
 			byte functionCode = frameStart[1];
 			
 			// allow a custom function registered with the slave to provide the number of bytes left to read
-			CustomMessageInfo messageInfo;
-			if (slave.TryGetCustomMessageInfo(functionCode, out messageInfo))
-				return messageInfo.Instance.RtuBytesRemaining(frameStart);
+//			CustomMessageInfo messageInfo;
+//			if (slave.TryGetCustomMessageInfo(functionCode, out messageInfo))
+//				return messageInfo.Instance.RtuBytesRemaining(frameStart);
 			
 			int numBytes;
 
@@ -61,7 +61,7 @@ namespace Modbus.IO
 					break;
 				default:
 					string errorMessage = String.Format(CultureInfo.InvariantCulture, "Function code {0} not supported.", functionCode);
-					_logger.Error(errorMessage);
+                    Logger.Error(errorMessage);
 					throw new NotImplementedException(errorMessage);
 			}
 
@@ -101,7 +101,7 @@ namespace Modbus.IO
 					break;
 				default:
 					string errorMessage = String.Format(CultureInfo.InvariantCulture, "Function code {0} not supported.", functionCode);
-					_logger.Error(errorMessage);
+                    Logger.Error(errorMessage);
 					throw new NotImplementedException(errorMessage);
 			}
 
@@ -139,7 +139,7 @@ namespace Modbus.IO
 			byte[] frameStart = Read(ResponseFrameStartLength);
 			byte[] frameEnd = Read(ResponseBytesToRead<T>(frameStart, _instanceCache));
 			byte[] frame = frameStart.Concat(frameEnd).ToArray();
-			_logger.InfoFormat("RX: {0}", frame.Join(", "));
+            Logger.Info("RX: {0}", frame.Join(", "));
 
 			return CreateResponse<T>(frame);
 		}
@@ -149,7 +149,7 @@ namespace Modbus.IO
 			byte[] frameStart = Read(RequestFrameStartLength);
 			byte[] frameEnd = Read(RequestBytesToRead(frameStart, slave));
 			byte[] frame = frameStart.Concat(frameEnd).ToArray();
-			_logger.InfoFormat("RX: {0}", frame.Join(", "));
+            Logger.Info("RX: {0}", frame.Join(", "));
 
 			return frame;
 		}

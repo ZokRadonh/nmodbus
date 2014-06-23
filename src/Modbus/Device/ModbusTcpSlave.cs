@@ -4,10 +4,8 @@ using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
 using System.Net.Sockets;
-using log4net;
+using NLog;
 using Modbus.IO;
-using Unme.Common;
-using Unme.Common.NullReferenceExtension;
 
 namespace Modbus.Device
 {
@@ -18,7 +16,7 @@ namespace Modbus.Device
 	{
 		private readonly object _mastersLock = new object();
 		private readonly object _serverLock = new object();
-		private readonly ILog _logger = LogManager.GetLogger(typeof(ModbusTcpSlave));
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 		private readonly Dictionary<string, ModbusMasterTcpConnection> _masters = new Dictionary<string, ModbusMasterTcpConnection>();
 		private TcpListener _server;
 
@@ -74,7 +72,7 @@ namespace Modbus.Device
 		/// </summary>
 		public override void Listen()
 		{
-			_logger.Debug("Start Modbus Tcp Server.");
+            Logger.Debug("Start Modbus Tcp Server.");
 
 			lock (_serverLock)
 			{
@@ -100,28 +98,28 @@ namespace Modbus.Device
 					throw new ArgumentException(String.Format(CultureInfo.InvariantCulture, "EndPoint {0} cannot be removed, it does not exist.", endPoint));
 			}
 
-			_logger.InfoFormat("Removed Master {0}", endPoint);
+            Logger.Info("Removed Master {0}", endPoint);
 		}
 
 		internal void AcceptCompleted(IAsyncResult ar)
 		{
-			ModbusTcpSlave slave = (ModbusTcpSlave) ar.AsyncState;
+			var slave = (ModbusTcpSlave) ar.AsyncState;
 
 			try
 			{
 				// use Socket async API for compact framework compat
-				Socket socket = null;
+				Socket socket;
 				lock (_serverLock)
 					socket = Server.Server.EndAccept(ar);
 
-				TcpClient client = new TcpClient { Client = socket };
+				var client = new TcpClient { Client = socket };
 				var masterConnection = new ModbusMasterTcpConnection(client, slave);
 				masterConnection.ModbusMasterTcpConnectionClosed += (sender, eventArgs) => RemoveMaster(eventArgs.EndPoint);
 
 				lock (_mastersLock)
 					_masters.Add(client.Client.RemoteEndPoint.ToString(), masterConnection);
 
-				_logger.Debug("Accept completed.");
+                Logger.Debug("Accept completed.");
 
 				// Accept another client
 				// use Socket async API for compact framework compat

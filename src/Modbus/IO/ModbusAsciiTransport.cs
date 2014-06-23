@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
-using log4net;
+using NLog;
 using Modbus.Device;
 using Modbus.Message;
 using Modbus.Utility;
@@ -15,7 +15,7 @@ namespace Modbus.IO
 	/// </summary>
 	internal class ModbusAsciiTransport : ModbusSerialTransport
 	{
-		private static readonly ILog _logger = LogManager.GetLogger(typeof(ModbusAsciiTransport));
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
 		internal ModbusAsciiTransport(IStreamResource streamResource)
 			: base(streamResource)
@@ -57,7 +57,7 @@ namespace Modbus.IO
 
 			// convert hex to bytes
 			byte[] frame = ModbusUtility.HexToBytes(frameHex);
-			_logger.InfoFormat("RX: {0}", frame.Join(", "));
+            Logger.Info("RX: {0}", frame.Join(", "));
 
 			if (frame.Length < 3)
 				throw new IOException("Premature end of stream, message truncated.");
