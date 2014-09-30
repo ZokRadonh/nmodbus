@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Net.Sockets;
 using System.Threading;
-using Unme.Common;
+using Modbus.Unme.Common;
 
 namespace Modbus.IO
 {

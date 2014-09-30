@@ -6,8 +6,7 @@ using System.Threading;
 using NLog;
 using Modbus.Device;
 using Modbus.Message;
-using Unme.Common;
-using Unme.Common.NullReferenceExtension;
+using Modbus.Unme.Common;
 
 namespace Modbus.IO
 {

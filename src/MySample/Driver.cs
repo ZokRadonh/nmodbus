@@ -26,10 +26,10 @@ namespace MySample
                 //ModbusTcpMasterReadInputs();			
                 //ModbusTcpMasterReadInputsFromModbusSlave();
                 //ModbusSerialAsciiMasterReadRegistersFromModbusSlave();
-                //StartModbusTcpSlave();
+                StartModbusTcpSlave();
                 //StartModbusUdpSlave();	
                 //StartModbusSerialAsciiSlave();
-                StartModbusSerialRtuSlave();
+                //StartModbusSerialRtuSlave();
             }
             catch (Exception e)
             {

@@ -1,5 +1,5 @@
 ﻿using System;
-using Unme.Common;
+using Modbus.Unme.Common;
 
 namespace Modbus.Device
 {

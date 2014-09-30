@@ -5,7 +5,7 @@ using System.Net;
 using System.Net.Sockets;
 using Modbus.IO;
 using Modbus.Message;
-using Unme.Common;
+using Modbus.Unme.Common;
 using NLog;
 
 namespace Modbus.Device

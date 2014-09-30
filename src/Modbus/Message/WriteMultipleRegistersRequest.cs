@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using Modbus.Data;
-using Unme.Common;
+using Modbus.Unme.Common;
 
 namespace Modbus.Message
 {
@@ -40,8 +40,8 @@ namespace Modbus.Message
 		/// </summary>
 		public byte ByteCount
 		{
-			get { return MessageImpl.ByteCount.Value; }
-			set { MessageImpl.ByteCount = value; }
+		    get { return MessageImpl.ByteCount.Value; }
+		    set { MessageImpl.ByteCount = value; }
 		}
 
 		/// <summary>

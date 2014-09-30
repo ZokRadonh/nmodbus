@@ -7,7 +7,7 @@ using System.Reflection;
 using Modbus.Data;
 using Modbus.IO;
 using Modbus.Message;
-using Unme.Common;
+using Modbus.Unme.Common;
 using NLog;
 
 namespace Modbus.Device

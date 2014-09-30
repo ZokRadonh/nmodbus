@@ -4,7 +4,7 @@ using System.Globalization;
 using System.IO;
 using NLog;
 using Modbus.Message;
-using Unme.Common;
+using Modbus.Unme.Common;
 
 namespace Modbus.IO
 {

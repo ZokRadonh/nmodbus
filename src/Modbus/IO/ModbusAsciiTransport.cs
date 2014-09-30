@@ -6,7 +6,7 @@ using NLog;
 using Modbus.Device;
 using Modbus.Message;
 using Modbus.Utility;
-using Unme.Common;
+using Modbus.Unme.Common;
 
 namespace Modbus.IO
 {

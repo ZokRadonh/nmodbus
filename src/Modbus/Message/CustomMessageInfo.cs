@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using Modbus.Data;
-using Unme.Common;
+using Modbus.Unme.Common;
 
 namespace Modbus.Message
 {

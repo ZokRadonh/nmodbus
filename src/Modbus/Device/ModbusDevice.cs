@@ -1,6 +1,6 @@
 using System;
 using Modbus.IO;
-using Unme.Common;
+using Modbus.Unme.Common;
 
 namespace Modbus.Device
 {

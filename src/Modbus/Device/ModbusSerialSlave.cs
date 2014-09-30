@@ -4,7 +4,7 @@ using System.IO;
 using System.IO.Ports;
 using Modbus.IO;
 using Modbus.Message;
-using Unme.Common;
+using Modbus.Unme.Common;
 using NLog;
 
 

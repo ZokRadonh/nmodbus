@@ -1,7 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.IO.Ports;
-using Unme.Common;
+using Modbus.Unme.Common;
 
 namespace Modbus.IO
 {

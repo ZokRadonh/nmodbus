@@ -8,7 +8,7 @@ using System.Net;
 using NLog;
 using Modbus.Device;
 using Modbus.Message;
-using Unme.Common;
+using Modbus.Unme.Common;
 
 namespace Modbus.IO
 {

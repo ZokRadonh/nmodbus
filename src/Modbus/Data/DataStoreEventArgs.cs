@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Modbus.Utility;
-using Unme.Common;
+using Modbus.Unme.Common;
 
 namespace Modbus.Data
 {
