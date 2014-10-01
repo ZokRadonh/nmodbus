@@ -5,8 +5,20 @@
     using System.Collections.ObjectModel;
     using System.Linq;
 
-    internal static class SequenceUtility
+    /// <summary>
+    /// 
+    /// </summary>
+    public static class SequenceUtility
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="first"></param>
+        /// <param name="second"></param>
+        /// <param name="additionalItems"></param>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
         public static IEnumerable<T> Concat<T>(this IEnumerable<T> first, IEnumerable<T> second,
             params IEnumerable<T>[] additionalItems)
         {
@@ -23,6 +35,13 @@
             return additionalItems.Aggregate(result, Enumerable.Concat);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="action"></param>
+        /// <typeparam name="T"></typeparam>
+        /// <exception cref="ArgumentNullException"></exception>
         public static void ForEach<T>(this IEnumerable<T> source, Action<T> action)
         {
             if (source == null)
@@ -33,6 +52,13 @@
                 action(obj);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="action"></param>
+        /// <typeparam name="T"></typeparam>
+        /// <exception cref="ArgumentNullException"></exception>
         public static void ForEachWithIndex<T>(this IEnumerable<T> source, Action<T, int> action)
         {
             if (source == null)
@@ -42,11 +68,27 @@
             ForEach(WithIndex(source), x => action(x.Item2, x.Item1));
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sequence"></param>
+        /// <param name="separator"></param>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
         public static string Join<T>(this IEnumerable<T> sequence, string separator)
         {
             return sequence.Join(separator, x => x.ToString());
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sequence"></param>
+        /// <param name="separator"></param>
+        /// <param name="conversion"></param>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
         public static string Join<T>(this IEnumerable<T> sequence, string separator, Func<T, string> conversion)
         {
             if (separator == null)
@@ -57,6 +99,13 @@
             return string.Join(separator, sequence.Select(conversion).ToArray());
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sequence"></param>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
         public static ReadOnlyCollection<T> ToReadOnly<T>(this IEnumerable<T> sequence)
         {
             if (sequence == null)
@@ -65,6 +114,13 @@
             return new ReadOnlyCollection<T>(sequence.ToArray());
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="element"></param>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
         public static IEnumerable<T> ToSequence<T>(this T element)
         {
             if ((object)element == null)
@@ -73,6 +129,13 @@
             return new[] { element };
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="element"></param>
+        /// <param name="additional"></param>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
         public static IEnumerable<T> ToSequence<T>(T element, params T[] additional)
         {
             var sequence = element.ToSequence().ToArray();
@@ -83,6 +146,16 @@
             return sequence;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="startIndex"></param>
+        /// <param name="size"></param>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
         public static IEnumerable<T> Slice<T>(this IEnumerable<T> source, int startIndex, int size)
         {
             if (source == null)
@@ -97,6 +170,13 @@
             return enumerable.Skip(startIndex).Take(size);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="source"></param>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
         public static IEnumerable<Tuple<int, T>> WithIndex<T>(this IEnumerable<T> source)
         {
             if (source == null)

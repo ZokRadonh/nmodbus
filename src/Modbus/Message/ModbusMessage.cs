@@ -8,12 +8,12 @@ namespace Modbus.Message
     /// </summary>
     public abstract class ModbusMessage
 	{
-		private ModbusMessageImpl _messageImpl;
+		private readonly ModbusMessageImpl _messageImpl;
 
 		/// <summary>
 		/// 
 		/// </summary>
-		public ModbusMessage()
+		protected ModbusMessage()
 		{
 			_messageImpl = new ModbusMessageImpl();
 		}
@@ -23,7 +23,7 @@ namespace Modbus.Message
 		/// </summary>
 		/// <param name="slaveAddress"></param>
 		/// <param name="functionCode"></param>
-		public ModbusMessage(byte slaveAddress, byte functionCode)
+		protected ModbusMessage(byte slaveAddress, byte functionCode)
 		{
 			_messageImpl = new ModbusMessageImpl(slaveAddress, functionCode);
 		}

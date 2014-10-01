@@ -4,7 +4,7 @@ using System.Globalization;
 using System.Linq;
 using Modbus.Data;
 using Modbus.Message;
-using Unme.Common;
+using Modbus.Unme.Common;
 
 namespace Modbus.IntegrationTests.CustomMessages
 {

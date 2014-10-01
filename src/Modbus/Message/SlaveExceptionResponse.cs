@@ -55,25 +55,31 @@ namespace Modbus.Message
 		/// </returns>
 		public override string ToString()
 		{
-			string message = _exceptionMessages.ContainsKey(SlaveExceptionCode) ? _exceptionMessages[SlaveExceptionCode] : Resources.Unknown;
-			return String.Format(CultureInfo.InvariantCulture, Resources.SlaveExceptionResponseFormat, Environment.NewLine, FunctionCode, SlaveExceptionCode, message);
+		    var message = _exceptionMessages.ContainsKey(SlaveExceptionCode)
+		        ? _exceptionMessages[SlaveExceptionCode]
+		        : Resources.Unknown;
+
+		    return String.Format(
+		        CultureInfo.InvariantCulture, Resources.SlaveExceptionResponseFormat,
+		        Environment.NewLine, FunctionCode, SlaveExceptionCode, message);
 		}
 
 		internal static Dictionary<byte, string> CreateExceptionMessages()
 		{
-			Dictionary<byte, string> messages = new Dictionary<byte, string>(9);
+			var messages = new Dictionary<byte, string>(9)
+			{
+			    {1, Resources.IllegalFunction},
+			    {2, Resources.IllegalDataAddress},
+			    {3, Resources.IllegalDataValue},
+			    {4, Resources.SlaveDeviceFailure},
+			    {5, Resources.Acknowlege},
+			    {6, Resources.SlaveDeviceBusy},
+			    {8, Resources.MemoryParityError},
+			    {10, Resources.GatewayPathUnavailable},
+			    {11, Resources.GatewayTargetDeviceFailedToRespond}
+			};
 
-			messages.Add(1, Resources.IllegalFunction);
-			messages.Add(2, Resources.IllegalDataAddress);
-			messages.Add(3, Resources.IllegalDataValue);
-			messages.Add(4, Resources.SlaveDeviceFailure);
-			messages.Add(5, Resources.Acknowlege);
-			messages.Add(6, Resources.SlaveDeviceBusy);
-			messages.Add(8, Resources.MemoryParityError);
-			messages.Add(10, Resources.GatewayPathUnavailable);
-			messages.Add(11, Resources.GatewayTargetDeviceFailedToRespond);
-
-			return messages;
+		    return messages;
 		}
 
         /// <summary>
@@ -81,9 +87,9 @@ namespace Modbus.Message
         /// </summary>
         /// <param name="frame"></param>
 		protected override void InitializeUnique(byte[] frame)
-		{
-			if (FunctionCode <= Modbus.ExceptionOffset)
-				throw new FormatException(Resources.SlaveExceptionResponseInvalidFunctionCode);
+        {
+            if (FunctionCode <= Modbus.ExceptionOffset)
+                throw new FormatException(Resources.SlaveExceptionResponseInvalidFunctionCode);
 
 			SlaveExceptionCode = frame[2];
 		}

@@ -14,7 +14,7 @@ using NUnit.Framework;
 using Modbus.Data;
 using Modbus.Device;
 using Modbus.IntegrationTests.CustomMessages;
-using Unme.Common;
+using Modbus.Unme.Common;
 
 namespace Modbus.IntegrationTests
 {
