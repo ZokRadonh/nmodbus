@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.IO;
 using System.IO.Ports;
 using System.Net;
 using System.Net.Sockets;
@@ -6,6 +8,7 @@ using System.Threading;
 using FtdAdapter;
 using Modbus.Data;
 using Modbus.Device;
+using Modbus.Message;
 using Modbus.Utility;
 
 namespace MySample
@@ -26,10 +29,11 @@ namespace MySample
                 //ModbusTcpMasterReadInputs();			
                 //ModbusTcpMasterReadInputsFromModbusSlave();
                 //ModbusSerialAsciiMasterReadRegistersFromModbusSlave();
-                StartModbusTcpSlave();
+                //StartModbusTcpSlave();
                 //StartModbusUdpSlave();	
                 //StartModbusSerialAsciiSlave();
                 //StartModbusSerialRtuSlave();
+                StartModbusTcpSlaveFileRead();
             }
             catch (Exception e)
             {
@@ -87,9 +91,9 @@ namespace MySample
                 const ushort numRegisters = 5;
 
                 // read five registers		
-                ushort[] registers = master.ReadHoldingRegisters(slaveId, startAddress, numRegisters);
+                var registers = master.ReadHoldingRegisters(slaveId, startAddress, numRegisters);
 
-                for (int i = 0; i < numRegisters; i++)
+                for (var i = 0; i < numRegisters; i++)
                     Console.WriteLine(@"Register {0}={1}", startAddress + i, registers[i]);
             }
 
@@ -158,14 +162,14 @@ namespace MySample
         {
             using (var client = new TcpClient("127.0.0.1", 502))
             {
-                ModbusIpMaster master = ModbusIpMaster.CreateIp(client);
+                var master = ModbusIpMaster.CreateIp(client);
 
                 // read five input values
                 const ushort startAddress = 100;
                 const ushort numInputs = 5;
-                bool[] inputs = master.ReadInputs(startAddress, numInputs);
+                var inputs = master.ReadInputs(startAddress, numInputs);
 
-                for (int i = 0; i < numInputs; i++)
+                for (var i = 0; i < numInputs; i++)
                     Console.WriteLine(@"Input {0}={1}", startAddress + i, inputs[i] ? 1 : 0);
             }
 
@@ -187,7 +191,7 @@ namespace MySample
                 var endPoint = new IPEndPoint(new IPAddress(new byte[] {127, 0, 0, 1}), 502);
                 client.Connect(endPoint);
 
-                ModbusIpMaster master = ModbusIpMaster.CreateIp(client);
+                var master = ModbusIpMaster.CreateIp(client);
 
                 const ushort startAddress = 1;
 
@@ -249,7 +253,7 @@ namespace MySample
         /// </summary>
         public static void StartModbusSerialUsbAsciiSlave()
         {
-            // TODO
+            // 
         }
 
         /// <summary>
@@ -257,7 +261,7 @@ namespace MySample
         /// </summary>
         public static void StartModbusSerialUsbRtuSlave()
         {
-            // TODO
+            // 
         }
 
         /// <summary>
@@ -297,7 +301,7 @@ namespace MySample
         {
             using (var client = new UdpClient(502))
             {
-                ModbusUdpSlave slave = ModbusUdpSlave.CreateUdp(client);
+                var slave = ModbusUdpSlave.CreateUdp(client);
                 slave.DataStore = DataStoreFactory.CreateDefaultDataStore();
 
                 slave.Listen();
@@ -325,15 +329,15 @@ namespace MySample
 
             // create the master
             var masterTcpClient = new TcpClient(address.ToString(), port);
-            ModbusIpMaster master = ModbusIpMaster.CreateIp(masterTcpClient);
+            var master = ModbusIpMaster.CreateIp(masterTcpClient);
 
             const ushort numInputs = 5;
             const ushort startAddress = 100;
 
             // read five register values
-            ushort[] inputs = master.ReadInputRegisters(startAddress, numInputs);
+            var inputs = master.ReadInputRegisters(startAddress, numInputs);
 
-            for (int i = 0; i < numInputs; i++)
+            for (var i = 0; i < numInputs; i++)
                 Console.WriteLine(@"Register {0}={1}", startAddress + i, inputs[i]);
 
             // clean up
@@ -371,16 +375,16 @@ namespace MySample
                 slaveThread.Start();
 
                 // create modbus master
-                ModbusSerialMaster master = ModbusSerialMaster.CreateAscii(masterPort);
+                var master = ModbusSerialMaster.CreateAscii(masterPort);
 
                 master.Transport.Retries = 5;
                 const ushort startAddress = 100;
                 const ushort numRegisters = 5;
 
                 // read five register values
-                ushort[] registers = master.ReadHoldingRegisters(slaveId, startAddress, numRegisters);
+                var registers = master.ReadHoldingRegisters(slaveId, startAddress, numRegisters);
 
-                for (int i = 0; i < numRegisters; i++)
+                for (var i = 0; i < numRegisters; i++)
                     Console.WriteLine(@"Register {0}={1}", startAddress + i, registers[i]);
             }
 
@@ -407,21 +411,88 @@ namespace MySample
                 port.Open();
 
                 // create modbus master
-                ModbusSerialMaster master = ModbusSerialMaster.CreateRtu(port);
+                var master = ModbusSerialMaster.CreateRtu(port);
 
                 const byte slaveId = 1;
                 const ushort startAddress = 1008;
                 const uint largeValue = UInt16.MaxValue + 5;
 
-                ushort lowOrderValue = BitConverter.ToUInt16(BitConverter.GetBytes(largeValue), 0);
-                ushort highOrderValue = BitConverter.ToUInt16(BitConverter.GetBytes(largeValue), 2);
+                var lowOrderValue = BitConverter.ToUInt16(BitConverter.GetBytes(largeValue), 0);
+                var highOrderValue = BitConverter.ToUInt16(BitConverter.GetBytes(largeValue), 2);
 
                 // write large value in two 16 bit chunks
                 master.WriteMultipleRegisters(slaveId, startAddress, new[] {lowOrderValue, highOrderValue});
 
                 // read large value in two 16 bit chunks and perform conversion
-                ushort[] registers = master.ReadHoldingRegisters(slaveId, startAddress, 2);
-                uint value = ModbusUtility.GetUInt32(registers[1], registers[0]);
+                var registers = master.ReadHoldingRegisters(slaveId, startAddress, 2);
+                var value = ModbusUtility.GetUInt32(registers[1], registers[0]);
+
+                Console.WriteLine(value);
+            }
+        }
+
+        /// <summary>
+        /// Simple Modbus TCP slave example.
+        /// </summary>
+        public static void StartModbusTcpSlaveFileRead()
+        {
+            try
+            {
+                const byte slaveId = 1;
+                const int port = 502;
+                var address = new IPAddress(new byte[] {127, 0, 0, 1});
+
+                // create and start the TCP slave
+                var slaveTcpListener = new TcpListener(address, port);
+                slaveTcpListener.Start();
+
+                ModbusSlave slave = ModbusTcpSlave.CreateTcp(slaveId, slaveTcpListener);
+                slave.DataStore = DataStoreFactory.CreateDefaultDataStore();
+
+                slave.RegisterCustomFunction<ReadFileRequest>(0x14,
+                    (request, dataStore) =>
+                    {
+                        if (request.FunctionCode != 0x14)
+                        {
+                            return new SlaveExceptionResponse(request.SlaveAddress, 0x94, 0x01);
+                        }
+
+                        if (request.ByteCount < 0x07 || request.ByteCount > 0xF5)
+                        {
+                            return new SlaveExceptionResponse(request.SlaveAddress, 0x94, 0x03);
+                        }
+
+                        var response = new ReadFileResponse
+                        {
+                            SlaveAddress = request.SlaveAddress
+                        };
+
+                        try
+                        {
+                            using (var file = new FileStream(@"..\..\..\..\README.txt", FileMode.Open))
+                            {
+                                foreach (var subRequest in request.SubRequest)
+                                {
+                                    var buffer = new byte[subRequest.RecordLength*2];
+                                    file.Position = subRequest.RecordNumber*subRequest.RecordLength*2;
+                                    var count = file.Read(buffer, 0, subRequest.RecordLength*2);
+                                    response.AddRecordData(buffer, count);
+                                }
+                            }
+                        }
+                        catch (IOException)
+                        {
+                            return new SlaveExceptionResponse(request.SlaveAddress, 0x94, 0x02);
+                        }
+
+                        return response;
+                    });
+
+                slave.Listen();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
             }
         }
     }

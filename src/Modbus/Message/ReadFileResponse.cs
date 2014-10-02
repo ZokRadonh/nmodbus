@@ -31,14 +31,18 @@ namespace Modbus.Message
         /// 
         /// </summary>
         /// <param name="buffer"></param>
-        public void AddRecordData(byte[] buffer)
+        /// <param name="count"></param>
+        public void AddRecordData(byte[] buffer, int count)
         {
             // File Resp. Length
-            _data.Add((byte)(buffer.Length + 1));
+            _data.Add((byte)(count + 1));
             // Reference Type
             _data.Add(0x06);
             // Record Data
-            _data.AddRange(buffer); 
+            for (var i = 0; i < count; i++)
+            {
+                _data.Add(buffer[i]); 
+            }
         }
 
         /// <summary>
