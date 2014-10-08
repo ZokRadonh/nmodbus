@@ -89,16 +89,16 @@ namespace Modbus.Device
 
 		internal static ReadCoilsInputsResponse ReadDiscretes(ReadCoilsInputsRequest request, DataStore dataStore, ModbusDataCollection<bool> dataSource)
 		{
-			DiscreteCollection data = DataStore.ReadData<DiscreteCollection, bool>(dataStore, dataSource, request.StartAddress, request.NumberOfPoints, dataStore.SyncRoot);
-			ReadCoilsInputsResponse response = new ReadCoilsInputsResponse(request.FunctionCode, request.SlaveAddress, data.ByteCount, data);
+            var data = DataStore.ReadData<DiscreteCollection, bool>(dataStore, dataSource, request.StartAddress, request.NumberOfPoints, dataStore.SyncRoot);
+            var response = new ReadCoilsInputsResponse(request.FunctionCode, request.SlaveAddress, data.ByteCount, data);
 
 			return response;
 		}
 
 		internal static ReadHoldingInputRegistersResponse ReadRegisters(ReadHoldingInputRegistersRequest request, DataStore dataStore, ModbusDataCollection<ushort> dataSource)
 		{
-			RegisterCollection data = DataStore.ReadData<RegisterCollection, ushort>(dataStore, dataSource, request.StartAddress, request.NumberOfPoints, dataStore.SyncRoot);
-			ReadHoldingInputRegistersResponse response = new ReadHoldingInputRegistersResponse(request.FunctionCode, request.SlaveAddress, data);
+            var data = DataStore.ReadData<RegisterCollection, ushort>(dataStore, dataSource, request.StartAddress, request.NumberOfPoints, dataStore.SyncRoot);
+            var response = new ReadHoldingInputRegistersResponse(request.FunctionCode, request.SlaveAddress, data);
 
 			return response;
 		}
@@ -113,7 +113,7 @@ namespace Modbus.Device
 		internal static WriteMultipleCoilsResponse WriteMultipleCoils(WriteMultipleCoilsRequest request, DataStore dataStore, ModbusDataCollection<bool> dataSource)
 		{
 			DataStore.WriteData(dataStore, request.Data.Take(request.NumberOfPoints), dataSource, request.StartAddress, dataStore.SyncRoot);
-			WriteMultipleCoilsResponse response = new WriteMultipleCoilsResponse(request.SlaveAddress, request.StartAddress, request.NumberOfPoints);
+            var response = new WriteMultipleCoilsResponse(request.SlaveAddress, request.StartAddress, request.NumberOfPoints);
 
 			return response;
 		}
@@ -128,7 +128,7 @@ namespace Modbus.Device
 		internal static WriteMultipleRegistersResponse WriteMultipleRegisters(WriteMultipleRegistersRequest request, DataStore dataStore, ModbusDataCollection<ushort> dataSource)
 		{
 			DataStore.WriteData(dataStore, request.Data, dataSource, request.StartAddress, dataStore.SyncRoot);
-			WriteMultipleRegistersResponse response = new WriteMultipleRegistersResponse(request.SlaveAddress, request.StartAddress, request.NumberOfPoints);
+            var response = new WriteMultipleRegistersResponse(request.SlaveAddress, request.StartAddress, request.NumberOfPoints);
 
 			return response;
 		}
@@ -140,7 +140,7 @@ namespace Modbus.Device
 			if (dataStore == null)
 				throw new ArgumentNullException("dataStore");
 
-			bool requestApplied = false;
+            var requestApplied = false;
 			response = null;
 
 			CustomMessageInfo messageInfo;
@@ -158,7 +158,7 @@ namespace Modbus.Device
 			if (frame == null)
 				throw new ArgumentNullException("frame");
 
-			bool messageCreated = false;
+			var messageCreated = false;
 			request = null;
 
 			CustomMessageInfo messageInfo;
@@ -221,12 +221,12 @@ namespace Modbus.Device
 						response = WriteMultipleRegisters((WriteMultipleRegistersRequest) request, DataStore, DataStore.HoldingRegisters);
 						break;
 					case Modbus.ReadWriteMultipleRegisters:
-						ReadWriteMultipleRegistersRequest readWriteRequest = (ReadWriteMultipleRegistersRequest) request;
+                        var readWriteRequest = (ReadWriteMultipleRegistersRequest)request;
 						WriteMultipleRegisters(readWriteRequest.WriteRequest, DataStore, DataStore.HoldingRegisters);
 						response = ReadRegisters(readWriteRequest.ReadRequest, DataStore, DataStore.HoldingRegisters);
 						break;
 					default:
-						string errorMessage = String.Format(CultureInfo.InvariantCulture, "Unsupported function code {0}", request.FunctionCode);
+                        var errorMessage = String.Format(CultureInfo.InvariantCulture, "Unsupported function code {0}", request.FunctionCode);
                         Logger.Error(errorMessage);
 						throw new ArgumentException(errorMessage, "request");
 				}

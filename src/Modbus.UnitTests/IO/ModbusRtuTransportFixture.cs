@@ -7,7 +7,7 @@ using Modbus.IO;
 using Modbus.Message;
 using Modbus.Utility;
 using Rhino.Mocks;
-using Unme.Common;
+using Modbus.Unme.Common;
 using Modbus.Device;
 
 namespace Modbus.UnitTests.IO
@@ -19,7 +19,7 @@ namespace Modbus.UnitTests.IO
 		public void BuildMessageFrame()
 		{
 			byte[] message = { 17, Modbus.ReadCoils, 0, 19, 0, 37, 14, 132 };
-			ReadCoilsInputsRequest request = new ReadCoilsInputsRequest(Modbus.ReadCoils, 17, 19, 37);
+            var request = new ReadCoilsInputsRequest(Modbus.ReadCoils, 17, 19, 37);
 			Assert.AreEqual(message, new ModbusRtuTransport(MockRepository.GenerateStub<IStreamResource>()).BuildMessageFrame(request));
 		}
 
@@ -69,7 +69,7 @@ namespace Modbus.UnitTests.IO
 		[Test]
 		public void RequestBytesToReadDiagnostics()
 		{
-			MockRepository mocks = new MockRepository();
+            var mocks = new MockRepository();
 			var mockSlave = mocks.PartialMock<ModbusSlave>((byte) 1, new EmptyTransport());
 
 			byte[] frame = { 0x01, 0x08, 0x00, 0x00, 0xA5, 0x37, 0, 0 };
@@ -79,7 +79,7 @@ namespace Modbus.UnitTests.IO
 		[Test]
 		public void RequestBytesToReadCoils()
 		{
-			MockRepository mocks = new MockRepository();
+            var mocks = new MockRepository();
 			var mockSlave = mocks.PartialMock<ModbusSlave>((byte) 1, new EmptyTransport());
 
 			byte[] frameStart = { 0x11, 0x01, 0x00, 0x13, 0x00, 0x25 };
@@ -89,7 +89,7 @@ namespace Modbus.UnitTests.IO
 		[Test]
 		public void RequestBytesToReadWriteCoilsRequest()
 		{
-			MockRepository mocks = new MockRepository();
+            var mocks = new MockRepository();
 			var mockSlave = mocks.PartialMock<ModbusSlave>((byte) 1, new EmptyTransport());
 
 			byte[] frameStart = { 0x11, 0x0F, 0x00, 0x13, 0x00, 0x0A, 0x02, 0xCD, 0x01 };
@@ -99,7 +99,7 @@ namespace Modbus.UnitTests.IO
 		[Test]
 		public void RequestBytesToReadWriteMultipleHoldingRegisters()
 		{
-			MockRepository mocks = new MockRepository();
+            var mocks = new MockRepository();
 			var mockSlave = mocks.PartialMock<ModbusSlave>((byte) 1, new EmptyTransport());
 
 			byte[] frameStart = { 0x11, 0x10, 0x00, 0x01, 0x00, 0x02, 0x04 };
@@ -109,7 +109,7 @@ namespace Modbus.UnitTests.IO
 		[Test, ExpectedException(typeof(NotImplementedException))]
 		public void RequestBytesToReadInvalidFunctionCode()
 		{
-			MockRepository mocks = new MockRepository();
+            var mocks = new MockRepository();
 			var mockSlave = mocks.PartialMock<ModbusSlave>((byte) 1, new EmptyTransport());
 
 			byte[] frame = { 0x11, 0xFF, 0x00, 0x01, 0x00, 0x02, 0x04 };
@@ -120,8 +120,8 @@ namespace Modbus.UnitTests.IO
 		[Test]
 		public void ChecksumsMatchSucceed()
 		{
-			ModbusRtuTransport transport = new ModbusRtuTransport(MockRepository.GenerateStub<IStreamResource>());
-			ReadCoilsInputsRequest message = new ReadCoilsInputsRequest(Modbus.ReadCoils, 17, 19, 37);
+            var transport = new ModbusRtuTransport(MockRepository.GenerateStub<IStreamResource>());
+            var message = new ReadCoilsInputsRequest(Modbus.ReadCoils, 17, 19, 37);
 			byte[] frame = { 17, Modbus.ReadCoils, 0, 19, 0, 37, 14, 132 };
 			Assert.IsTrue(transport.ChecksumsMatch(message, frame));
 		}
@@ -129,8 +129,8 @@ namespace Modbus.UnitTests.IO
 		[Test]
 		public void ChecksumsMatchFail()
 		{
-			ModbusRtuTransport transport = new ModbusRtuTransport(MockRepository.GenerateStub<IStreamResource>());
-			ReadCoilsInputsRequest message = new ReadCoilsInputsRequest(Modbus.ReadCoils, 17, 19, 38);
+            var transport = new ModbusRtuTransport(MockRepository.GenerateStub<IStreamResource>());
+            var message = new ReadCoilsInputsRequest(Modbus.ReadCoils, 17, 19, 38);
 			byte[] frame = { 17, Modbus.ReadCoils, 0, 19, 0, 37, 14, 132 };
 			Assert.IsFalse(transport.ChecksumsMatch(message, frame));
 		}
@@ -138,8 +138,8 @@ namespace Modbus.UnitTests.IO
 		[Test]
 		public void ReadResponse()
 		{
-			MockRepository mocks = new MockRepository();
-			ModbusRtuTransport transport = mocks.PartialMock<ModbusRtuTransport>(MockRepository.GenerateStub<IStreamResource>());
+            var mocks = new MockRepository();
+            var transport = mocks.PartialMock<ModbusRtuTransport>(MockRepository.GenerateStub<IStreamResource>());
 
 			Expect.Call(transport.Read(ModbusRtuTransport.ResponseFrameStartLength))
 				.Return(new byte[] { 1, 1, 1, 0 });
@@ -149,9 +149,9 @@ namespace Modbus.UnitTests.IO
 
 			mocks.ReplayAll();
 
-			ReadCoilsInputsResponse response = transport.ReadResponse<ReadCoilsInputsResponse>() as ReadCoilsInputsResponse;
+            var response = transport.ReadResponse<ReadCoilsInputsResponse>() as ReadCoilsInputsResponse;
 			Assert.IsNotNull(response);
-			ReadCoilsInputsResponse expectedResponse = new ReadCoilsInputsResponse(Modbus.ReadCoils, 1, 1, new DiscreteCollection(false));
+            var expectedResponse = new ReadCoilsInputsResponse(Modbus.ReadCoils, 1, 1, new DiscreteCollection(false));
 			Assert.AreEqual(response.MessageFrame, expectedResponse.MessageFrame);
 
 			mocks.VerifyAll();
@@ -160,8 +160,8 @@ namespace Modbus.UnitTests.IO
 		[Test]
 		public void ReadResponseSlaveException()
 		{
-			MockRepository mocks = new MockRepository();
-			ModbusRtuTransport transport = mocks.PartialMock<ModbusRtuTransport>(MockRepository.GenerateStub<IStreamResource>());
+            var mocks = new MockRepository();
+            var transport = mocks.PartialMock<ModbusRtuTransport>(MockRepository.GenerateStub<IStreamResource>());
 
 			byte[] messageFrame = { 0x01, 0x81, 0x02 };
 			byte[] crc = ModbusUtility.CalculateCrc(messageFrame);
@@ -186,8 +186,8 @@ namespace Modbus.UnitTests.IO
 		[Test, ExpectedException(typeof(IOException))]
 		public void ReadResponseSlaveExceptionWithErroneousLrc()
 		{
-			MockRepository mocks = new MockRepository();
-			ModbusRtuTransport transport = mocks.PartialMock<ModbusRtuTransport>(MockRepository.GenerateStub<IStreamResource>());
+            var mocks = new MockRepository();
+            var transport = mocks.PartialMock<ModbusRtuTransport>(MockRepository.GenerateStub<IStreamResource>());
 
 			byte[] messageFrame = { 0x01, 0x81, 0x02 };
 			// invalid crc
@@ -197,7 +197,7 @@ namespace Modbus.UnitTests.IO
 				.Return(messageFrame.Concat(crc[0].ToSequence()).ToArray());
 
 			Expect.Call(transport.Read(1))
-				.Return(new byte[] { crc[1] });
+				.Return(new [] { crc[1] });
 
 			mocks.ReplayAll();
 
@@ -209,8 +209,8 @@ namespace Modbus.UnitTests.IO
 		[Test]
 		public void ReadRequest()
 		{
-			MockRepository mocks = new MockRepository();
-			ModbusRtuTransport transport = mocks.PartialMock<ModbusRtuTransport>(MockRepository.GenerateStub<IStreamResource>());
+            var mocks = new MockRepository();
+            var transport = mocks.PartialMock<ModbusRtuTransport>(MockRepository.GenerateStub<IStreamResource>());
 			var mockSlave = mocks.PartialMock<ModbusSlave>((byte) 1, new EmptyTransport());
 
 			Expect.Call(transport.Read(ModbusRtuTransport.RequestFrameStartLength))
@@ -228,8 +228,8 @@ namespace Modbus.UnitTests.IO
 		[Test]
 		public void Read()
 		{
-			MockRepository mocks = new MockRepository();
-			IStreamResource mockSerialResource = mocks.StrictMock<IStreamResource>();
+            var mocks = new MockRepository();
+            var mockSerialResource = mocks.StrictMock<IStreamResource>();
 
 			Expect.Call(mockSerialResource.Read(new byte[5], 0, 5)).Do(((Func<byte[], int, int, int>) delegate(byte[] buf, int offset, int count)
 			{
@@ -245,7 +245,7 @@ namespace Modbus.UnitTests.IO
 
 			mocks.ReplayAll();
 
-			ModbusRtuTransport transport = new ModbusRtuTransport(mockSerialResource);
+            var transport = new ModbusRtuTransport(mockSerialResource);
 			Assert.AreEqual(new byte[] { 2, 2, 2, 3, 3 }, transport.Read(5));
 
 			mocks.VerifyAll();

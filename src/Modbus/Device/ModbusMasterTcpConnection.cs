@@ -17,7 +17,7 @@ namespace Modbus.Device
 		private readonly string _endPoint;
 		private readonly Stream _stream;
 		private readonly ModbusTcpSlave _slave;
-		//private static int _instanceCounter;
+        //private static int _instanceCounter;
 		private byte[] _mbapHeader = new byte[6];
 		private byte[] _messageFrame;
 
@@ -104,18 +104,18 @@ namespace Modbus.Device
 			CatchExceptionAndRemoveMasterEndPoint(() =>
 			{
                 Logger.Debug("Read Frame completed {0} bytes", Stream.EndRead(ar));
-				byte[] frame = _mbapHeader.Concat(_messageFrame).ToArray();
+                var frame = _mbapHeader.Concat(_messageFrame).ToArray();
                 Logger.Info("RX: {0}", frame.Join(", "));
 
-				IModbusMessage request = ModbusMessageFactory.CreateModbusRequest(Slave, frame.Slice(6, frame.Length - 6).ToArray());
+                var request = ModbusMessageFactory.CreateModbusRequest(Slave, frame.Slice(6, frame.Length - 6).ToArray());
 				request.TransactionId = (ushort) IPAddress.NetworkToHostOrder(BitConverter.ToInt16(frame, 0));
 
 				// perform action and build response
-				IModbusMessage response = Slave.ApplyRequest(request);
+                var response = Slave.ApplyRequest(request);
 				response.TransactionId = request.TransactionId;
 
 				// write response
-				byte[] responseFrame = Transport.BuildMessageFrame(response);
+                var responseFrame = Transport.BuildMessageFrame(response);
                 Logger.Info("TX: {0}", responseFrame.Join(", "));
 				Stream.BeginWrite(responseFrame, 0, responseFrame.Length, WriteCompleted, null);
 			}, EndPoint);
@@ -167,7 +167,7 @@ namespace Modbus.Device
 			catch (Exception e)
 			{
                 Logger.Error("Unexpected exception encountered", e);
-                byte[] responseFrame = Transport.BuildMessageFrame(new SlaveExceptionResponse());
+                var responseFrame = Transport.BuildMessageFrame(new SlaveExceptionResponse());
                 Logger.Info("ERROR TX: {0}", responseFrame.Join(", "));
                 Stream.BeginWrite(responseFrame, 0, responseFrame.Length, WriteCompleted, null);
 				throw;

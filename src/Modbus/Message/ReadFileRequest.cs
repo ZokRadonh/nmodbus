@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using Modbus.Data;
 
 namespace Modbus.Message
 {
@@ -20,7 +21,7 @@ namespace Modbus.Message
         /// <summary>
         /// 
         /// </summary>
-        public List<ReadFileSubRequest> SubRequest { get; private set; }
+        public List<FileRecord> Records { get; private set; }
 
         /// <summary>
         /// 
@@ -28,19 +29,19 @@ namespace Modbus.Message
         public ReadFileRequest()
         {
             _messageImpl = new ModbusMessageImpl();
-            SubRequest = new List<ReadFileSubRequest>();
+            Records = new List<FileRecord>();
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="slaveAddress"></param>
-        /// <param name="functionCode"></param>
-        public ReadFileRequest(byte slaveAddress, byte functionCode)
-        {
-            _messageImpl = new ModbusMessageImpl(slaveAddress, functionCode);
-            SubRequest = new List<ReadFileSubRequest>();
-        }
+//        /// <summary>
+//        /// 
+//        /// </summary>
+//        /// <param name="slaveAddress"></param>
+//        /// <param name="functionCode"></param>
+//        public ReadFileRequest(byte slaveAddress, byte functionCode)
+//        {
+//            _messageImpl = new ModbusMessageImpl(slaveAddress, functionCode);
+//            Records = new List<FileRecord>();
+//        }
 
         /// <summary>
         /// 
@@ -95,16 +96,15 @@ namespace Modbus.Message
 
             ByteCount = frame[2];
 
-            var subRequestCount = (frame.Length - 3) / 7;
-            for (var i = 0; i < subRequestCount; i++)
+            var recordsCount = ByteCount / 7;
+            for (var i = 0; i < recordsCount; i++)
             {
-                SubRequest.Add(new ReadFileSubRequest
-                {
-                    ReferenceType = frame[3 + 7 * i],
-                    FuleNumber = (ushort)IPAddress.NetworkToHostOrder(BitConverter.ToInt16(frame, 4 + 7 * i)),
-                    RecordNumber = (ushort)IPAddress.NetworkToHostOrder(BitConverter.ToInt16(frame, 6 + 7 * i)),
-                    RecordLength = (ushort)IPAddress.NetworkToHostOrder(BitConverter.ToInt16(frame, 8 + 7 * i))
-                });
+                if ( frame[3 + 7 * i] != 0x06) continue;
+
+                Records.Add(new FileRecord(
+                    (ushort) IPAddress.NetworkToHostOrder(BitConverter.ToInt16(frame, 4 + 7*i)),
+                    (ushort) IPAddress.NetworkToHostOrder(BitConverter.ToInt16(frame, 6 + 7*i)),
+                    (ushort) IPAddress.NetworkToHostOrder(BitConverter.ToInt16(frame, 8 + 7*i))));
             }
         }
 
@@ -117,11 +117,11 @@ namespace Modbus.Message
         {
             var typedResponse = (ReadFileRequest)response;
 
-            if (ByteCount > 0xF5 || ByteCount < 0x07)
-            {
-                throw new IOException(String.Format(
-                    "Unexpected byte count. Received {0}.", typedResponse.ByteCount));
-            }
+            //if (ByteCount > 0xF5 || ByteCount < 0x07)
+            //{
+            //    throw new IOException(String.Format(
+            //        "Unexpected byte count. Received {0}.", typedResponse.ByteCount));
+            //}
 
             // best effort validation - the same response for a request for 1 vs 6 coils (same byte count) will pass validation.
             //            var expectedByteCount = (NumberOfPoints + 7) / 8;

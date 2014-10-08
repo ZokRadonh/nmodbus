@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using Modbus.Utility;
 using Modbus.Unme.Common;
+using Modbus.Utility;
 
 namespace Modbus.Data
 {
@@ -15,8 +15,8 @@ namespace Modbus.Data
 	{
 		private DataStoreEventArgs(ushort startAddress, ModbusDataType modbusDataType)
 		{
-			this.StartAddress = startAddress;
-			this.ModbusDataType = modbusDataType;
+			StartAddress = startAddress;
+			ModbusDataType = modbusDataType;
 		}
 
 		/// <summary>

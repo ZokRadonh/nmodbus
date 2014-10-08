@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
-using NLog;
 using Modbus.Device;
 using Modbus.Message;
 using Modbus.Utility;
 using Modbus.Unme.Common;
+using NLog;
 
 namespace Modbus.IO
 {

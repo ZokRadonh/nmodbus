@@ -5,7 +5,7 @@ using System.Linq;
 using NUnit.Framework;
 using Modbus.Data;
 using Modbus.UnitTests.Message;
-using Unme.Common;
+using Modbus.Unme.Common;
 
 namespace Modbus.UnitTests.Utility
 {
@@ -36,15 +36,15 @@ namespace Modbus.UnitTests.Utility
 		[Test]
 		public void SliceCollection()
 		{
-			Collection<bool> col = new Collection<bool>(new bool[] { true, false, false, false, true, true });
-			Assert.AreEqual(new bool[] { false, false, true }, col.Slice(2, 3).ToArray());
+			var col = new Collection<bool>(new [] { true, false, false, false, true, true });
+			Assert.AreEqual(new [] { false, false, true }, col.Slice(2, 3).ToArray());
 		}
 
 		[Test]
 		public void SliceReadOnlyCollection()
 		{
-			ReadOnlyCollection<bool> col = new ReadOnlyCollection<bool>(new bool[] { true, false, false, false, true, true });
-			Assert.AreEqual(new bool[] { false, false, true }, col.Slice(2, 3).ToArray());
+            var col = new ReadOnlyCollection<bool>(new [] { true, false, false, false, true, true });
+			Assert.AreEqual(new [] { false, false, true }, col.Slice(2, 3).ToArray());
 		}
 
 		[Test, ExpectedException(typeof(ArgumentNullException))]
@@ -70,7 +70,7 @@ namespace Modbus.UnitTests.Utility
 		[Test]
 		public void CreateDefaultCollection()
 		{
-			RegisterCollection col = MessageUtility.CreateDefaultCollection<RegisterCollection, ushort>(3, 5);
+            var col = MessageUtility.CreateDefaultCollection<RegisterCollection, ushort>(3, 5);
 			Assert.AreEqual(5, col.Count);
 			Assert.AreEqual(new ushort[] { 3, 3, 3, 3, 3 }, col.ToArray());
 		}

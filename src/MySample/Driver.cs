@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.IO.Ports;
 using System.Net;
@@ -471,11 +470,11 @@ namespace MySample
                         {
                             using (var file = new FileStream(@"..\..\..\..\README.txt", FileMode.Open))
                             {
-                                foreach (var subRequest in request.SubRequest)
+                                foreach (var record in request.Records)
                                 {
-                                    var buffer = new byte[subRequest.RecordLength*2];
-                                    file.Position = subRequest.RecordNumber*subRequest.RecordLength*2;
-                                    var count = file.Read(buffer, 0, subRequest.RecordLength*2);
+                                    var buffer = new byte[record.RecordLength * 2];
+                                    file.Position = record.RecordNumber * record.RecordLength * 2;
+                                    var count = file.Read(buffer, 0, record.RecordLength * 2);
                                     response.AddRecordData(buffer, count);
                                 }
                             }

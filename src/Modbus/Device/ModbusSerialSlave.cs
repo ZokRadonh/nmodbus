@@ -90,12 +90,12 @@ namespace Modbus.Device
 	                try
 	                {
 	                    // read request and build message
-	                    byte[] frame = SerialTransport.ReadRequest(this);
+                        var frame = SerialTransport.ReadRequest(this);
 	                    IModbusMessage request = ModbusMessageFactory.CreateModbusRequest(this, frame);
 
 	                    if (SerialTransport.CheckFrame && !SerialTransport.ChecksumsMatch(request, frame))
 	                    {
-	                        string errorMessage = String.Format(CultureInfo.InvariantCulture,
+                            var errorMessage = String.Format(CultureInfo.InvariantCulture,
 	                            "Checksums failed to match {0} != {1}", request.MessageFrame.Join(", "), frame.Join(", "));
 	                        Logger.Error(errorMessage);
 	                        throw new IOException(errorMessage);
