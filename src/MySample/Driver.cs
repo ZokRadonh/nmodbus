@@ -470,7 +470,7 @@ namespace MySample
                         {
                             using (var file = new FileStream(@"..\..\..\..\README.txt", FileMode.Open))
                             {
-                                foreach (var record in request.Records)
+                                foreach (var record in request.Data)
                                 {
                                     var buffer = new byte[record.RecordLength * 2];
                                     file.Position = record.RecordNumber * record.RecordLength * 2;

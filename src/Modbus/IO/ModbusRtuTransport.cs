@@ -34,7 +34,7 @@ namespace Modbus.IO
 		/// </summary>
 		public static int RequestBytesToRead(byte[] frameStart, ModbusSlave slave)
 		{
-			byte functionCode = frameStart[1];
+			var functionCode = frameStart[1];
 			
 			// allow a custom function registered with the slave to provide the number of bytes left to read
 //			CustomMessageInfo messageInfo;
@@ -56,11 +56,14 @@ namespace Modbus.IO
 					break;
 				case Modbus.WriteMultipleCoils:
 				case Modbus.WriteMultipleRegisters:
-					byte byteCount = frameStart[6];
+					var byteCount = frameStart[6];
 					numBytes = byteCount + 2;
-					break;
+                    break;
+                case 0x14:
+                    numBytes = frameStart[2] - 2;
+                    break;
 				default:
-					string errorMessage = String.Format(CultureInfo.InvariantCulture, "Function code {0} not supported.", functionCode);
+					var errorMessage = String.Format(CultureInfo.InvariantCulture, "Function code {0} not supported.", functionCode);
                     Logger.Error(errorMessage);
 					throw new NotImplementedException(errorMessage);
 			}
@@ -98,9 +101,12 @@ namespace Modbus.IO
 				case Modbus.WriteMultipleRegisters:
 				case Modbus.Diagnostics:
 					numBytes = 4;
-					break;
+                    break;
+                case 0x14:
+                    numBytes = frameStart[2] + 2;
+                    break;
 				default:
-					string errorMessage = String.Format(CultureInfo.InvariantCulture, "Function code {0} not supported.", functionCode);
+					var errorMessage = String.Format(CultureInfo.InvariantCulture, "Function code {0} not supported.", functionCode);
                     Logger.Error(errorMessage);
 					throw new NotImplementedException(errorMessage);
 			}
@@ -110,8 +116,8 @@ namespace Modbus.IO
 
 		public virtual byte[] Read(int count)
 		{
-			byte[] frameBytes = new byte[count];
-			int numBytesRead = 0;
+			var frameBytes = new byte[count];
+			var numBytesRead = 0;
 
 			while (numBytesRead != count)
 				numBytesRead += StreamResource.Read(frameBytes, numBytesRead, count - numBytesRead);
@@ -121,7 +127,7 @@ namespace Modbus.IO
 
 		internal override byte[] BuildMessageFrame(IModbusMessage message)
 		{
-			List<byte> messageBody = new List<byte>();
+			var messageBody = new List<byte>();
 			messageBody.Add(message.SlaveAddress);
 			messageBody.AddRange(message.ProtocolDataUnit);
 			messageBody.AddRange(ModbusUtility.CalculateCrc(message.MessageFrame));
@@ -136,9 +142,9 @@ namespace Modbus.IO
 
 		internal override IModbusMessage ReadResponse<T>()
 		{
-			byte[] frameStart = Read(ResponseFrameStartLength);
-			byte[] frameEnd = Read(ResponseBytesToRead<T>(frameStart, _instanceCache));
-			byte[] frame = frameStart.Concat(frameEnd).ToArray();
+			var frameStart = Read(ResponseFrameStartLength);
+			var frameEnd = Read(ResponseBytesToRead<T>(frameStart, _instanceCache));
+			var frame = frameStart.Concat(frameEnd).ToArray();
             Logger.Info("RX: {0}", frame.Join(", "));
 
 			return CreateResponse<T>(frame);
@@ -146,9 +152,9 @@ namespace Modbus.IO
 
 		internal override byte[] ReadRequest(ModbusSlave slave)
 		{
-			byte[] frameStart = Read(RequestFrameStartLength);
-			byte[] frameEnd = Read(RequestBytesToRead(frameStart, slave));
-			byte[] frame = frameStart.Concat(frameEnd).ToArray();
+			var frameStart = Read(RequestFrameStartLength);
+			var frameEnd = Read(RequestBytesToRead(frameStart, slave));
+			var frame = frameStart.Concat(frameEnd).ToArray();
             Logger.Info("RX: {0}", frame.Join(", "));
 
 			return frame;
